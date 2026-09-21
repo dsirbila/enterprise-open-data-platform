@@ -10,4 +10,10 @@ jobs:
         with:
           python-version: "3.12"
       - name: Syntax check all Python files
-        run: python -m py_compile $(git ls-files '*.py' || echo "")
+        run: |
+          PY_FILES=$(git ls-files '*.py')
+          if [ -n "$PY_FILES" ]; then
+            python -m py_compile $PY_FILES
+          else
+            echo "No Python files found to compile. Skipping check."
+          fi

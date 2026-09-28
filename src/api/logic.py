@@ -11,6 +11,9 @@ CITY_COORDS = {
 class UnknownCityError(Exception):
     """მოთხოვნილი ქალაქი CITY_COORDS-ში არ არსებობს."""
 
+class UnknownEventError(Exception):
+    """მოთხოვნილი მიწისძვრა მითითებული ID-ით ვერ მოიძებნა."""
+
 def get_weather_for_city(client: Any, city: str) -> dict:
     if city not in CITY_COORDS:
         raise UnknownCityError(f"უცნობი ქალაქი: {city}")
@@ -35,3 +38,12 @@ def get_currency_rates(client: Any) -> dict:
 
 def get_seismic_events(client: Any, start_date: str, end_date: str, min_magnitude: float = 1.5) -> list:
     return client.get_recent_events(start_date, end_date, min_magnitude)
+
+def get_seismic_event_by_id(client: Any, event_id: str) -> dict:
+    # ვეძებთ ბოლო პერიოდის მოვლენებში
+    events = client.get_recent_events("2026-01-01", "2026-12-31", 0.0)
+    event = next((e for e in events if e.get("event_id") == event_id), None)
+    
+    if not event:
+        raise UnknownEventError(f"მიწისძვრა ID-ით '{event_id}' ვერ მოიძებნა.")
+    return event

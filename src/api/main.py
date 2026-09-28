@@ -7,8 +7,10 @@ from fastapi import BackgroundTasks, Depends, FastAPI, HTTPException, Request
 from src.api.dependencies import get_currency_client, get_seismic_client, get_weather_client
 from src.api.logic import (
     UnknownCityError,
+    UnknownEventError,
     get_currency_rates,
     get_seismic_events,
+    get_seismic_event_by_id,
     get_weather_for_city,
 )
 from src.api.schemas import CurrencyResponse, HealthResponse, SeismicEvent, WeatherResponse
@@ -78,5 +80,18 @@ def read_seismic_events(
         start_date = str(date.today() - timedelta(days=30))
     try:
         return get_seismic_events(client, start_date, end_date, min_magnitude)
+    except SeismicAPIError as exc:
+        raise HTTPException(status_code=502, detail=str(exc)) from exc
+
+@app.get("/seismic/events/{event_id}", response_model=SeismicEvent)
+def read_seismic_event_by_id(
+    event_id: str,
+    client=Depends(get_seismic_client),
+) -> dict:
+    """კონკრეტული მიწისძვრის მიღება ID-ის მიხედვით."""
+    try:
+        return get_seismic_event_by_id(client, event_id)
+    except UnknownEventError as exc:
+        raise HTTPException(status_code=404, detail=str(exc)) from exc
     except SeismicAPIError as exc:
         raise HTTPException(status_code=502, detail=str(exc)) from exc

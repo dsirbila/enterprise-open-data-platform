@@ -1,0 +1,3 @@
+weather query: Tbilisi
+weather query: Tbilisi
+weather query: Batumi

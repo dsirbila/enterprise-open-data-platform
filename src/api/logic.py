@@ -1,5 +1,6 @@
 """lecture 12: FastAPI-ის უკან მდგარი ბიზნეს-ლოგიკა — testable, framework-ისგან დამოუკიდებელი."""
 from typing import Any
+from datetime import date, timedelta
 
 CITY_COORDS = {
     "Tbilisi": (41.7151, 44.8271),
@@ -40,8 +41,11 @@ def get_seismic_events(client: Any, start_date: str, end_date: str, min_magnitud
     return client.get_recent_events(start_date, end_date, min_magnitude)
 
 def get_seismic_event_by_id(client: Any, event_id: str) -> dict:
-    # ვეძებთ ბოლო პერიოდის მოვლენებში
-    events = client.get_recent_events("2026-01-01", "2026-12-31", 0.0)
+    # ვიყენებთ რეალურ დინამიკურ თარიღებს (ბოლო 30 დღე), რომ მომავალ დროში არ გადავიდეთ
+    end_date = str(date.today())
+    start_date = str(date.today() - timedelta(days=30))
+    
+    events = client.get_recent_events(start_date, end_date, 0.0)
     event = next((e for e in events if e.get("event_id") == event_id), None)
     
     if not event:

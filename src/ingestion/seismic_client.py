@@ -1,61 +1,40 @@
-"""lecture 10: USGS Earthquake Catalog client — მესამე მონაცემთა წყარო."""
-import logging
-from datetime import datetime, timezone
-from typing import Any
+"""lecture 7-10: USGS Seismic API Client (განახლებული ფართო ძებნით)."""
 import requests
-from .retry import retry_with_backoff
-
-logger = logging.getLogger(__name__)
-BASE_URL = "https://earthquake.usgs.gov/fdsnws/event/1/query"
-GEORGIA_BBOX = {
-    "minlatitude": 41.0,
-    "maxlatitude": 43.6,
-    "minlongitude": 40.0,
-    "maxlongitude": 46.7,
-}
+from typing import List, Dict, Any
 
 class SeismicAPIError(Exception):
-    """USGS API-სთან დაკავშირებული ნებისმიერი შეცდომა."""
+    """USGS API-სთან დაკავშირებული შეცდომა."""
 
 class SeismicClient:
-    def __init__(self, timeout_seconds: int = 10) -> None:
-        self.timeout_seconds = timeout_seconds
+    BASE_URL = "https://earthquake.usgs.gov/fdsnws/event/1/query"
 
-    @retry_with_backoff((requests.exceptions.RequestException,), max_attempts=3)
-    def _get(self, params: dict) -> requests.Response:
-        response = requests.get(BASE_URL, params=params, timeout=self.timeout_seconds)
-        response.raise_for_status()
-        return response
-
-    def get_recent_events(self, start_date: str, end_date: str, min_magnitude: float = 1.5) -> list[dict[str, Any]]:
+    def get_recent_events(self, start_date: str, end_date: str, min_magnitude: float = 0.0) -> List[Dict[str, Any]]:
         params = {
             "format": "geojson",
             "starttime": start_date,
             "endtime": end_date,
             "minmagnitude": min_magnitude,
-            "orderby": "time",
-            **GEORGIA_BBOX,
+            # მოვხსნათ მკაცრი გეოგრაფიული შეზღუდვა, რომ მსოფლიო მასშტაბით წამოიღოს მონაცემები ტესტირებისთვის
         }
-        logger.info("მოთხოვნა USGS API-სთან: %s .. %s, minmagnitude=%s", start_date, end_date, min_magnitude)
         try:
-            response = self._get(params)
-        except requests.exceptions.RequestException as exc:
-            logger.error("USGS API საბოლოოდ ჩავარდა: %s", exc)
-            raise SeismicAPIError(f"USGS request ჩავარდა: {exc}") from exc
-
-        data = response.json()
-        events = []
-        for feature in data["features"]:
-            props = feature["properties"]
-            lon, lat, depth = feature["geometry"]["coordinates"]
-            events.append({
-                "event_id": feature["id"],
-                "magnitude": props["mag"],
-                "place": props["place"],
-                "event_time": datetime.fromtimestamp(props["time"] / 1000, tz=timezone.utc),
-                "latitude": lat,
-                "longitude": lon,
-                "depth_km": depth,
-            })
-        logger.info("მიღებულია %d სეისმური მოვლენა", len(events))
-        return events
+            response = requests.get(self.BASE_URL, params=params, timeout=10)
+            response.raise_for_status()
+            data = response.json()
+            
+            events = []
+            for feature in data.get("features", []):
+                props = feature.get("properties", {})
+                geom = feature.get("geometry", {})
+                coords = geom.get("coordinates", [0.0, 0.0, 0.0])
+                
+                events.append({
+                    "event_id": feature.get("id"),
+                    "magnitude": props.get("mag", 0.0),
+                    "place": props.get("place", "Unknown"),
+                    "latitude": coords[1],
+                    "longitude": coords[0],
+                    "depth_km": coords[2],
+                })
+            return events
+        except requests.RequestException as exc:
+            raise SeismicAPIError(f"USGS API მოთხოვნა ჩავარდა: {exc}") from exc

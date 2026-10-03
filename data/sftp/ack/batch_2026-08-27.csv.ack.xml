@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ack>
+  <file>batch_2026-08-27.csv</file>
+  <status>SUCCESS</status>
+  <rows_processed>3</rows_processed>
+  <timestamp>2026-10-03T19:51:55.806896+00:00</timestamp>
+</ack>

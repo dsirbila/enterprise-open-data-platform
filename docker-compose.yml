@@ -28,5 +28,17 @@ services:
     profiles:
       - core
 
+  # ---------- SFTP (lecture 15) ----------
+  sftp:
+    image: atmoz/sftp:alpine
+    container_name: eodp-sftp
+    profiles: ["core"]
+    ports:
+      - "2222:22"
+    volumes:
+      - ./data/sftp:/home/partner
+    command: partner:partnerpass:1001:100:upload,processed,ack
+
 volumes:
   postgres_data:
+

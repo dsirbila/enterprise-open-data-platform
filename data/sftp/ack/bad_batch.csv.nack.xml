@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<nack>
+  <file>bad_batch.csv</file>
+  <status>FAILED</status>
+  <error>row 1: არასწორი magnitude მნიშვნელობა: 'NOT_A_NUMBER'</error>
+  <timestamp>2026-10-03T19:52:31.770392+00:00</timestamp>
+</nack>

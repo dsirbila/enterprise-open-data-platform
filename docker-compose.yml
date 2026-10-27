@@ -112,6 +112,17 @@ services:
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT_INTERNAL
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
 
+  kafka-ui:
+    image: provectuslabs/kafka-ui:latest
+    container_name: eodp-kafka-ui
+    profiles: ["streaming"]
+    ports:
+      - "8080:8080"
+    environment:
+      KAFKA_CLUSTERS_0_NAME: local-kafka
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:29092
+      KAFKA_CLUSTERS_0_ZOOKEEPER: zookeeper:2181
+
 volumes:
   postgres_data:
 

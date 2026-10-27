@@ -1,46 +1,47 @@
-"""lecture 19: Kafka Producer — USGS მიწისძვრების event stream."""
-import logging
-from datetime import date, timedelta
+"""lecture 19/20: Seismic Producer — კოორდინატებზე დაფუძნებული custom partitioning (west/east) ინტეგრაციით."""
+import json
+import random
 from confluent_kafka import Producer
-from src.ingestion.seismic_client import SeismicAPIError, SeismicClient
-from src.streaming.event_transform import seismic_event_to_kafka_message
+from src.streaming.partitioning import get_partition_key
 
-logger = logging.getLogger(__name__)
 TOPIC = "seismic-events"
 
-def delivery_report(err, msg) -> None:
-    if err is not None:
-        logger.error("Message delivery ჩავარდა: %s", err)
-    else:
-        logger.info("Message delivered: %s [partition %d]", msg.topic(), msg.partition())
+def generate_dummy_event():
+    # ვანაწილებთ თბილისის, ბათუმის და სხვა არეალის კოორდინატებზე
+    locations = [
+        ("Tbilisi", 41.7151, 44.8271),
+        ("Batumi", 41.6168, 41.6367),
+        ("Other", 45.0, 45.0)
+    ]
+    name, lat, lon = random.choice(locations)
+    return {
+        "event_id": f"evt-{random.randint(1000, 9999)}",
+        "latitude": lat,
+        "longitude": lon,
+        "magnitude": round(random.uniform(2.0, 6.5), 1),
+        "place": name
+    }
 
-def produce_recent_events(bootstrap_servers: str = "localhost:9092") -> int:
+def run_producer(bootstrap_servers: str = "localhost:9092", num_messages: int = 5):
     producer = Producer({"bootstrap.servers": bootstrap_servers})
-    client = SeismicClient()
-
-    end_date = date.today().isoformat()
-    start_date = (date.today() - timedelta(days=2)).isoformat()
-
-    try:
-        events = client.get_recent_events(start_date, end_date, min_magnitude=1.5)
-    except SeismicAPIError as exc:
-        logger.error("USGS fetch ჩავარდა: %s", exc)
-        return 0
-
-    for event in events:
-        message = seismic_event_to_kafka_message(event)
-        producer.produce(
-            TOPIC,
-            key=event["event_id"].encode("utf-8"),
-            value=message,
-            callback=delivery_report,
-        )
-
+    
+    for _ in range(num_messages):
+        event = generate_dummy_event()
+        lat = event["latitude"]
+        lon = event["longitude"]
+        
+        # ვადგენთ რეგიონს კოორდინატებით (west / east / unknown)
+        partition_key = get_partition_key(lat, lon)
+        
+        value_bytes = json.dumps(event, ensure_ascii=False).encode("utf-8")
+        key_bytes = partition_key.encode("utf-8")
+        
+        # ვუგზავნით კაფკას key-სთან ერთად, რომ ერთი რეგიონის მონაცემები ერთ partition-ში დაჯგუფდეს
+        producer.produce(TOPIC, key=key_bytes, value=value_bytes)
+        print(f"გაგზავნილია: {event['place']} (lat={lat}, lon={lon}) -> key: '{partition_key}'")
+        
     producer.flush()
-    logger.info("გაგზავნილია %d event Kafka topic-ში: %s", len(events), TOPIC)
-    return len(events)
+    print("[OK] Producer-მა წარმატებით გაგზავნა შეტყობინებები")
 
 if __name__ == "__main__":
-    import logging as _logging
-    _logging.basicConfig(level=_logging.INFO)
-    produce_recent_events()
+    run_producer()

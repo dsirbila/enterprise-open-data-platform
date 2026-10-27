@@ -17,7 +17,7 @@ class SeismicClient:
             # მოვხსნათ მკაცრი გეოგრაფიული შეზღუდვა, რომ მსოფლიო მასშტაბით წამოიღოს მონაცემები ტესტირებისთვის
         }
         try:
-            response = requests.get(self.BASE_URL, params=params, timeout=10)
+            response = requests.get(self.BASE_URL, params=params, timeout=30)
             response.raise_for_status()
             data = response.json()
             

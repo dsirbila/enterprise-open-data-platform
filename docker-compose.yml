@@ -129,6 +129,7 @@ services:
     command: /opt/spark/bin/spark-class org.apache.spark.deploy.master.Master
     environment:
       - SPARK_MODE=master
+      - PATH=$PATH:/opt/spark/bin
     ports:
       - "8082:8080"
       - "7077:7077"

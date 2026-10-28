@@ -9,3 +9,4 @@ __pycache__/
 
 data/spark_output/
 *.crc
+data/cross_domain_daily_summary.parquet/

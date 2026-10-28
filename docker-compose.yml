@@ -123,6 +123,39 @@ services:
       KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:29092
       KAFKA_CLUSTERS_0_ZOOKEEPER: zookeeper:2181
 
+  spark-master:
+    image: apache/spark:latest
+    container_name: eodp-spark-master
+    command: /opt/spark/bin/spark-class org.apache.spark.deploy.master.Master
+    environment:
+      - SPARK_MODE=master
+    ports:
+      - "8082:8080"
+      - "7077:7077"
+    volumes:
+      - ./src/spark_jobs:/opt/spark-jobs
+      - ./data:/data
+    networks:
+      - eodp-network
+
+  spark-worker:
+    image: apache/spark:latest
+    container_name: eodp-spark-worker
+    command: /opt/spark/bin/spark-class org.apache.spark.deploy.worker.Worker spark://spark-master:7077
+    environment:
+      - SPARK_MODE=worker
+      - SPARK_MASTER_URL=spark://spark-master:7077
+    volumes:
+      - ./src/spark_jobs:/opt/spark-jobs
+      - ./data:/data
+    depends_on:
+      - spark-master
+    networks:
+      - eodp-network
+
 volumes:
   postgres_data:
 
+networks:
+  eodp-network:
+    driver: bridge

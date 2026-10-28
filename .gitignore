@@ -1,6 +1,11 @@
 .env
+.venv/
+
 # Python cache files
 __pycache__/
 *.pyc
 *.pyo
 *.pyd
+
+data/spark_output/
+*.crc

@@ -13,12 +13,12 @@ def main() -> int:
     setup_logging()
     try:
         csv_rows = read_csv(
-            SAMPLE_DIR / "currency_rates_2026-08-27.csv",
+            SAMPLE_DIR / "currency_rates_2026-08-28.csv",
             required_columns=["currency_code", "rate", "rate_date"],
         )
         print(f"[OK] CSV: {len(csv_rows)} row, პირველი: {csv_rows[0]}")
 
-        xml_rows = read_xml(SAMPLE_DIR / "weather_forecast_2026-08-27.xml")
+        xml_rows = read_xml(SAMPLE_DIR / "weather_forecast_2026-08-28.xml")
         print(f"[OK] XML: {len(xml_rows)} ჩანაწერი, პირველი: {xml_rows[0]}")
 
         geojson_path = SAMPLE_DIR / "earthquakes_sample.geojson"

@@ -8,7 +8,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 from src.ingestion.excel_handler import read_excel, write_excel, ExcelImportError
 
 def main() -> int:
-    test_path = Path("/tmp/test_currency.xlsx")
+    test_path = Path("tmp/test_currency.xlsx")
     
     try:
         # 1. ტესტი: Round-trip (ჩაწერა და წაკითხვა)

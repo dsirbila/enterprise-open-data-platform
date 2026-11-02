@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<forecasts>
+    <forecast>
+        <city>Tbilisi</city>
+        <forecast_time>2026-08-27T12:00:00+00</forecast_time>
+        <temperature_c>28.3</temperature_c>
+    </forecast>
+</forecasts>

@@ -16,6 +16,20 @@ WEATHER_AVRO_SCHEMA = {
     ],
 }
 
+WEATHER_AVRO_SCHEMA_V2 = {
+    "type": "record",
+    "name": "WeatherForecast",
+    "fields": [
+        {"name": "city", "type": "string"},
+        {"name": "latitude", "type": "double"},
+        {"name": "longitude", "type": "double"},
+        {"name": "forecast_time", "type": "string"},
+        {"name": "temperature_c", "type": "double"},
+        {"name": "humidity_pct", "type": "double"},
+        {"name": "wind_speed_kmh", "type": "double", "default": 0.0},  # ახალი, default-იანი
+    ],
+}
+
 def write_json(records: list, path: Path) -> None:
     with open(path, "w", encoding="utf-8") as f:
         json.dump(records, f, default=str)
@@ -45,7 +59,7 @@ def read_parquet(path: Path) -> list:
     import pyarrow.parquet as pq
     return pq.read_table(path).to_pylist()
 
-def write_avro(records: list, path: Path, schema: dict = WEATHER_AVRO_SCHEMA) -> None:
+def write_avro(records: list, path: Path, schema: dict = WEATHER_AVRO_SCHEMA_V2) -> None:
     import fastavro
     with open(path, "wb") as f:
         fastavro.writer(f, schema, records)
@@ -53,4 +67,4 @@ def write_avro(records: list, path: Path, schema: dict = WEATHER_AVRO_SCHEMA) ->
 def read_avro(path: Path) -> list:
     import fastavro
     with open(path, "rb") as f:
-        return list(fastavro.reader(f))
+        return list(fastavro.reader(f, reader_schema=WEATHER_AVRO_SCHEMA_V2))

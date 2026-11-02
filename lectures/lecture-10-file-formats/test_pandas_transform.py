@@ -7,7 +7,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 from src.ingestion.pandas_transform import compute_daily_currency_stats
 
 def main() -> int:
-    csv_path = Path("data/sample/currency_rates_2026-08-27.csv")
+    csv_path = Path("data/sample/currency_rates_2026-08-28.csv")
     if not csv_path.exists():
         print(f"[FAIL] ფაილი არ მოიძებნა: {csv_path}")
         return 1

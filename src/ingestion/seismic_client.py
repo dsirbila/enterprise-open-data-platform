@@ -23,6 +23,7 @@ class SeismicClient:
             
             events = []
             for feature in data.get("features", []):
+
                 props = feature.get("properties", {})
                 geom = feature.get("geometry", {})
                 coords = geom.get("coordinates", [0.0, 0.0, 0.0])
@@ -33,7 +34,7 @@ class SeismicClient:
                     "place": props.get("place", "Unknown"),
                     "latitude": coords[1],
                     "longitude": coords[0],
-                    "depth_km": coords[2],
+                    "depth_km": coords[2]
                 })
             return events
         except requests.RequestException as exc:

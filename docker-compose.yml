@@ -127,6 +127,7 @@ services:
     image: apache/spark:latest
     container_name: eodp-spark-master
     command: /opt/spark/bin/spark-class org.apache.spark.deploy.master.Master
+    profiles: ["spark"]
     environment:
       - SPARK_MODE=master
       - PATH=$PATH:/opt/spark/bin
@@ -143,6 +144,7 @@ services:
     image: apache/spark:latest
     container_name: eodp-spark-worker
     command: /opt/spark/bin/spark-class org.apache.spark.deploy.worker.Worker spark://spark-master:7077
+    profiles: ["spark"]
     environment:
       - SPARK_MODE=worker
       - SPARK_MASTER_URL=spark://spark-master:7077
@@ -153,6 +155,26 @@ services:
       - spark-master
     networks:
       - eodp-network
+
+  # ---------- ClickHouse (lecture 23) ----------
+  clickhouse:
+    image: clickhouse/clickhouse-server:24.8
+    container_name: eodp-clickhouse
+    profiles: ["analytics"]
+    ports:
+      - "8123:8123"
+      - "9000:9000"
+    volumes:
+      - ./docker/clickhouse/users.d/default-user.xml:/etc/clickhouse-server/users.d/default-user.xml:ro
+    ulimits:
+      nofile:
+        soft: 262144
+        hard: 262144
+    healthcheck:
+      test: ["CMD", "clickhouse-client", "--query", "SELECT 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
 volumes:
   postgres_data:

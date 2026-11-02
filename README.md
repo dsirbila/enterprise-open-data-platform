@@ -1,38 +1,48 @@
 # Enterprise Open Data Platform
 
-Modern Enterprise Data Engineering with AI. A comprehensive platform implementing end-to-end data ingestion pipelines, format benchmarks, operational OLTP storage, and high-performance OLAP analytical aggregation.
+Modern Enterprise Data Engineering with AI[cite: 1]. A comprehensive platform implementing end-to-end data pipelines based on Georgian open data (Open-Meteo weather, NBG currency, USGS earthquakes)[cite: 1].
 
 ---
 
 ## 📚 Labs & Curriculum Overview
 
-- **Lab 1: Environment Setup** — Configuring WSL2 (Ubuntu 26.04.1 LTS) and system clock sources for optimal container performance.
-- **Lab 2: Git Workflow & Version Control** — Initializing the repository, managing CRLF/LF line endings, and establishing commit standards.
-- **Lab 3: Containerization Infrastructure** — Setting up Docker Compose for multi-service enterprise architectures.
-- **Lab 4: Python Virtual Environment** — Configuring isolated Python `.venv` environments and dependency management via `requirements.txt`.
-- **Lab 5: Project Structure Design** — Establishing modular architecture (`src/ingestion`, `src/analytics`, `lectures`).
-- **Lab 6: Configuration Management** — Managing environment configs, user settings, and secure credential handling.
-- **Lab 7: Security & `.gitignore` Auditing** — Stripping environment secrets, Python caches (`__pycache__`), and build metadata.
-- **Lab 8: Data Pipeline Architecture** — Designing the foundational architecture for ingestion, transformation, and storage.
-- **Lab 9: Extraction Utilities** — Building robust data fetchers and source connectors.
-- **Lab 10: XML Schema Validation** — Implementing `xml_validator.py` with XSD compliance for enterprise data integrity.
-- **Lab 11: File Format Benchmarking** — Comparing performance, memory footprint, and compression efficiency across CSV, Parquet, and Avro (`compare_formats.py`).
-- **Lab 12: Pandas Transformations** — Performing structured data manipulations and type casting (`test_pandas_transform.py`).
-- **Lab 13: Excel Data Handling** — Implementing round-trip export logic and workbook processing (`test_excel_handler.py`).
-- **Lab 14: Relational Databases (PostgreSQL)** — Setting up operational OLTP databases and connection parameters.
-- **Lab 15: OLTP Schema Design** — Designing normalized tables for weather (`weather.forecasts`) and currency (`currency.rates`) datasets.
-- **Lab 16: Operational Ingestion** — Populating PostgreSQL tables with real-time transactional metrics.
-- **Lab 17: Distributed Processing (PySpark)** — Introducing PySpark session management and distributed data structures.
-- **Lab 18: Spark Transformations** — Building distributed data processing pipelines and cleaning routines.
-- **Lab 19: Columnar Storage Concepts** — Transitioning from OLTP row stores to OLAP columnar architectures.
-- **Lab 20: ClickHouse Containerization** — Integrating ClickHouse into Docker Compose with custom user configurations (`users.d/default-user.xml`).
-- **Lab 21: ClickHouse MergeTree Tables** — Defining high-performance analytical DDL tables with proper sorting keys (`ORDER BY`).
-- **Lab 22: Postgres-to-ClickHouse ETL** — Implementing programmatic data pipelines (`run_clickhouse_etl.py`) to move records from operational storage to analytical tables.
-- **Lab 23: ClickHouse Query Optimization & Data Skipping Indexes** — Building dynamic query handlers (`clickhouse_queries.py`) and configuring Data Skipping Indexes (`minmax`, `set`) via `skipping_indexes.sql`.
+### Module I — Foundations
+1. **Lab 1: Environment & WSL2 Setup** — Installing VS Code, Git, Docker Desktop, repository structure setup[cite: 1].
+2. **Lab 2: Dev Environment & Git** — Docker Compose with Postgres+Redis containers, feature-branch → PR → merge workflow[cite: 1].
+3. **Lab 3: Database Foundations** — DBeaver + PostgreSQL connection, 3 schemas: weather / currency / seismic[cite: 1].
+4. **Lab 4: PostgreSQL & SQL Basics** — DDL/DML, table creation, and initial data loading from sample JSON[cite: 1].
+5. **Lab 5: Advanced SQL** — Window functions, CTE, JOIN, trend analysis, and EXPLAIN[cite: 1].
+6. **Lab 6: Data Modeling** — Star Schema design (fact/dim tables) using dbdiagram.io or draw.io[cite: 1].
+
+### Module II — Python & Data Ingestion
+7. **Lab 7: Python for Data Engineering** — First REST client using requests and logging for Open-Meteo[cite: 1].
+8. **Lab 8: Parallel Processing** — Fetching weather for 4 Georgian cities concurrently using `concurrent.futures`[cite: 1].
+9. **Lab 9: REST API Integration** — Production-grade client with retry/backoff for Open-Meteo + NBG[cite: 1].
+10. **Lab 10: File Processing & XML Validation** — CSV, JSON, XML, GeoJSON file handling and USGS earthquake data integration[cite: 1].
+11. **Lab 11: Modern Data Formats** — PyArrow (Parquet/Avro) conversion, size and performance benchmarking across 3 sources[cite: 1].
+12. **Lab 12: FastAPI** — Building a custom wrapper API ("Georgia Open Data Gateway")[cite: 1].
+
+### Module III — Data Pipelines
+13. **Lab 13: ETL Fundamentals** — Python + psycopg2 REST-to-PostgreSQL incremental loading (NBG)[cite: 1].
+14. **Lab 14: ELT & Data Quality** — Validation framework, freshness/duplicate checks, and error reporting[cite: 1].
+15. **Lab 15: Enterprise Data Integration** — Docker SFTP image simulation, partner feeds, XML/CSV, ACK/NACK handling[cite: 1].
+16. **Lab 16: Redis Caching** — API response caching with TTL and Pub/Sub invalidation[cite: 1].
+
+### Module IV — Orchestration & Streaming
+17. **Lab 17: Apache Airflow — Basics** — First Airflow DAG for daily data ingestion[cite: 1].
+18. **Lab 18: Airflow — Advanced** — Dynamic DAGs, sensors, and retry policies[cite: 1].
+19. **Lab 19: Apache Kafka — Basics** — Producer/Consumer stream setup for USGS earthquake events[cite: 1].
+20. **Lab 20: Kafka — Advanced** — Dead Letter Queue (DLQ), partitioning, and stream monitoring[cite: 1].
+21. **Lab 21: Apache Spark — Basics** — PySpark DataFrame API for NBG batch transformations[cite: 1].
+22. **Lab 22: Spark — Advanced** — Joining 3 sources and Spark query optimization[cite: 1].
+
+### Module V — Modern Data Platform Engineering
+23. **Lab 23: ClickHouse OLAP Integration** — Columnar database setup for fast analytical aggregations on weather and currency data[cite: 1].
 
 ---
 
 ## 💻 Tech Stack
-- **Languages & Frameworks:** Python 3.12, PySpark, Pandas, lxml, openpyxl, clickhouse-connect, psycopg2
-- **Database & Storage:** PostgreSQL 16, ClickHouse (MergeTree Engine)
-- **Infrastructure:** Docker Compose (Analytics Profile), Ubuntu 26.04 LTS (WSL2)
+- **Languages & Frameworks:** Python 3.12, PySpark, Pandas, FastAPI, psycopg2
+- **Databases & Storage:** PostgreSQL, Redis, ClickHouse, Parquet/Avro
+- **Orchestration & Streaming:** Apache Airflow, Apache Kafka
+- **Infrastructure:** Docker Compose, Ubuntu / WSL2

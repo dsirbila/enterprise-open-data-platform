@@ -46,6 +46,7 @@ def main() -> None:
 
             size = path.stat().st_size
             print(f"{name:<10} {human_size(size):<10} {write_time:.3f}s{'':<4} {read_time:.3f}s")
+
         except ImportError as exc:
             print(f"{name:<10} გამოტოვებულია — ბიბლიოთეკა ვერ მოიძებნა ({exc})")
 

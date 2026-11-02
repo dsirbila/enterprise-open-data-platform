@@ -16,7 +16,7 @@ WEATHER_ROWS = [
 ]
 
 def build_currency_csv() -> Path:
-    path = SAMPLE_DIR / "currency_rates_2026-08-27.csv"
+    path = SAMPLE_DIR / "currency_rates_2026-08-28.csv"
     with open(path, "w", newline="", encoding="utf-8-sig") as f:
         writer = csv.DictWriter(f, fieldnames=list(CURRENCY_ROWS[0].keys()))
         writer.writeheader()
@@ -24,7 +24,7 @@ def build_currency_csv() -> Path:
     return path
 
 def build_weather_xml() -> Path:
-    path = SAMPLE_DIR / "weather_forecast_2026-08-27.xml"
+    path = SAMPLE_DIR / "weather_forecast_2026-08-28.xml"
     root = ET.Element("forecasts")
     for row in WEATHER_ROWS:
         record = ET.SubElement(root, "forecast")

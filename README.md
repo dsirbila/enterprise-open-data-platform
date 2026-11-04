@@ -38,6 +38,7 @@ Modern Enterprise Data Engineering with AI. A comprehensive platform implementin
 
 ### Module V — Modern Data Platform Engineering
 23. **Lab 23: ClickHouse OLAP Integration** — Columnar database setup for fast analytical aggregations on weather and currency data.
+24. **Lab 24: Databricks Lakehouse & Medallion Architecture** — End-to-end Delta Lake ETL pipeline automation using Python Databricks SDK (`run_pipeline.py`) across Bronze, Silver, and Gold layers.
 
 ---
 
